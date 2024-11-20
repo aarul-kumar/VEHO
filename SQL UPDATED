@@ -1,0 +1,91 @@
+CREATE DATABASE IF NOT EXISTS veho;
+USE veho;
+ 
+CREATE TABLE Crew (
+    crew_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    role ENUM('Driver', 'Conductor') NOT NULL
+) ENGINE=InnoDB;
+ 
+CREATE TABLE CREW_LOGIN_INFO (
+    crew_login_id INT AUTO_INCREMENT PRIMARY KEY,
+    crew_id INT NOT NULL,
+    password VARCHAR(50) NOT NULL,
+    FOREIGN KEY (crew_id) REFERENCES Crew(crew_id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+ 
+CREATE TABLE Bus (
+    bus_id INT AUTO_INCREMENT PRIMARY KEY,
+    bus_number VARCHAR(50) NOT NULL UNIQUE,
+    capacity INT NOT NULL
+) ENGINE=InnoDB;
+ 
+CREATE TABLE Route (
+    route_id INT AUTO_INCREMENT PRIMARY KEY,
+    route_name VARCHAR(100) NOT NULL,
+    start_point VARCHAR(100) NOT NULL,
+    end_point VARCHAR(100) NOT NULL
+) ENGINE=InnoDB;
+ 
+CREATE TABLE Schedule (
+    schedule_id INT AUTO_INCREMENT PRIMARY KEY,
+    bus_id INT NOT NULL,
+    route_id INT NOT NULL,
+    start_time DATETIME NOT NULL,
+    end_time DATETIME NOT NULL,
+    FOREIGN KEY (bus_id) REFERENCES Bus(bus_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (route_id) REFERENCES Route(route_id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+ 
+CREATE TABLE CrewAssignment (
+    assignment_id INT AUTO_INCREMENT PRIMARY KEY,
+    schedule_id INT NOT NULL,
+    crew_id INT NOT NULL,
+    FOREIGN KEY (schedule_id) REFERENCES Schedule(schedule_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (crew_id) REFERENCES Crew(crew_id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+ 
+CREATE TABLE ADMIN_LOGIN_INFO (
+    admin_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(50) NOT NULL
+) ENGINE=InnoDB;
+ 
+INSERT INTO Crew (name, role) VALUES
+('Hari', 'Driver'),
+('Rahul', 'Conductor'),
+('Harsh', 'Driver'),
+('Krish', 'Conductor');
+ 
+INSERT INTO CREW_LOGIN_INFO (crew_id, password) VALUES
+(1, 'Driver@101'),  -- Password for Hari
+(2, 'Conductor@102'),  -- Password for Rahul
+(3, 'Driver@103'),  -- Password for Harsh
+(4, 'Conductor@104');  -- Password for Krish
+ 
+INSERT INTO Bus (bus_number, capacity) VALUES
+('DL01AB1234', 50),
+('DL02CD5678', 40),
+('DL03EF9101', 45);
+ 
+INSERT INTO Route (route_name, start_point, end_point) VALUES
+('Route 101', 'Connaught Place', 'Karol Bagh'),
+('Route 102', 'Saket', 'Gurgaon'),
+('Route 103', 'Nehru Place', 'Dwarka');
+ 
+INSERT INTO Schedule (bus_id, route_id, start_time, end_time) VALUES
+(1, 1, '2024-10-18 08:00:00', '2024-10-18 10:00:00'),
+(2, 2, '2024-10-18 09:00:00', '2024-10-18 11:00:00'),
+(3, 3, '2024-10-18 10:00:00', '2024-10-18 12:00:00');
+ 
+INSERT INTO CrewAssignment (schedule_id, crew_id) VALUES
+(1, 1),  -- Hari assigned to Schedule 1
+(1, 2),  -- Rahul assigned to Schedule 1
+(2, 3),  -- Harsh assigned to Schedule 2
+(2, 4);  -- Krish assigned to Schedule 2
+ 
+INSERT INTO ADMIN_LOGIN_INFO (username, password) VALUES
+('admin1', 'Admin@123'),
+('admin2', 'Secure@456'),
+('admin3', 'Password@789'),
+('admin4', 'Manage@2023'); 
